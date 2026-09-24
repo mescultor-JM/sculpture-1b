@@ -9,7 +9,6 @@
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 
   <style>
-    /* Minimal reset to ensure it fills the screen on mobile */
     body, html {
       margin: 0;
       padding: 0;
@@ -27,7 +26,7 @@
     }
 
     /* Error message container (hidden by default) */
-    #error-message {
+    #error-message, #ar-error-message {
       display: none;
       position: absolute;
       top: 50%;
@@ -38,9 +37,16 @@
       padding: 20px;
       border-radius: 8px;
       text-align: center;
-      max-width: 80%;
+      max-width: 85%;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       z-index: 100;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    #ar-error-message {
+      background-color: #e3f2fd;
+      color: #0d47a1;
     }
 
     /* UI Layer for floating buttons */
@@ -55,14 +61,13 @@
       gap: 16px;
       z-index: 10;
       width: 100%;
-      pointer-events: none; /* Let clicks pass through around the button */
+      pointer-events: none;
     }
 
-    /* --- DOUBLE-SIDED FLIP BUTTON STYLES (OPTIMIZED SIZE) --- */
     .flip-button-container {
       perspective: 1000px;
-      width: 220px; /* Optimized width */
-      height: 64px; /* Optimized height */
+      width: 220px;
+      height: 64px;
       pointer-events: auto; 
     }
 
@@ -84,11 +89,10 @@
       text-align: center;
       transition: transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
       transform-style: preserve-3d;
-      border-radius: 32px; /* Optimized rounded corners */
+      border-radius: 32px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     }
 
-    /* Flip state triggered by JS */
     .flip-button.flipped .flip-button-inner {
       transform: rotateX(180deg);
     }
@@ -103,19 +107,17 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px; /* Optimized spacing */
+      gap: 10px;
       font-weight: 600;
-      font-size: 18px; /* Optimized font size */
+      font-size: 18px;
       letter-spacing: 0.5px; 
     }
 
-    /* Front: Primary Action */
     .flip-button-front {
       background: linear-gradient(135deg, #007AFF 0%, #0055D4 100%);
       color: white;
     }
 
-    /* Back: Active/Processing State */
     .flip-button-back {
       background: linear-gradient(135deg, #34C759 0%, #248A3D 100%);
       color: white;
@@ -123,12 +125,11 @@
     }
 
     .flip-button svg {
-      width: 22px; /* Optimized icon size */
+      width: 22px;
       height: 22px; 
       fill: currentColor;
     }
 
-    /* Optional: Subtle pulse animation to draw attention */
     @keyframes pulse {
       0% { box-shadow: 0 8px 24px rgba(0, 122, 255, 0.3); }
       50% { box-shadow: 0 8px 32px rgba(0, 122, 255, 0.6); }
@@ -141,12 +142,24 @@
 </head>
 <body>
 
-  <!-- Error handling container -->
+  <!-- General Load Error -->
   <div id="error-message" role="alert">
     <strong>Error:</strong> <span id="error-text">Failed to load 3D model.</span>
     <br><br>
     <button onclick="location.reload()" style="padding: 8px 16px; background: #c62828; color: white; border: none; border-radius: 4px; cursor: pointer;">
       Reload Page
+    </button>
+  </div>
+
+  <!-- AR Specific Error (e.g., Xiaomi ARCore issue) -->
+  <div id="ar-error-message" role="alert">
+    <strong>AR Unavailable</strong><br>
+    Your device or browser doesn't support AR. <br>
+    Please use <strong>Google Chrome</strong> and ensure "Google Play Services for AR" is updated in the Play Store. <br><br>
+    <em>You can still rotate and zoom the 3D model on screen!</em>
+    <br><br>
+    <button onclick="document.getElementById('ar-error-message').style.display='none'" style="padding: 8px 16px; background: #0d47a1; color: white; border: none; border-radius: 4px; cursor: pointer;">
+      Got it
     </button>
   </div>
 
@@ -158,23 +171,21 @@
     ar 
     ar-modes="scene-viewer webxr quick-look" 
     ar-placement="floor"
+    ar-tracking="surface"
     camera-controls 
     shadow-intensity="1"
     exposure="1"
     environment-image="neutral">
   </model-viewer>
 
-  <!-- UI Layer with Double-Sided AR Button -->
   <div id="ui-layer">
     <div class="flip-button-container">
       <button id="ar-button" class="flip-button" aria-label="View sculpture in Augmented Reality">
         <div class="flip-button-inner">
-          <!-- Front Face -->
           <div class="flip-button-front">
             <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
             <span>View in AR</span>
           </div>
-          <!-- Back Face -->
           <div class="flip-button-back">
             <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
             <span>Activating...</span>
@@ -185,16 +196,14 @@
   </div>
 
   <script>
-    // Phase 1 & 2: Robust Error Handling + Custom AR Button Logic
     const modelViewer = document.querySelector('#ar-model');
     const errorMessage = document.querySelector('#error-message');
-    const errorText = document.querySelector('#error-text');
+    const arErrorMessage = document.querySelector('#ar-error-message');
     const arButton = document.querySelector('#ar-button');
 
-    // 1. Error Handling
+    // 1. General Load Error Handling
     modelViewer.addEventListener('error', (event) => {
       console.error('[Model Viewer Error]', event);
-      errorText.textContent = 'Failed to load the 3D model. Please check the file path (./escultura.glb) and ensure you are using a secure (HTTPS) connection.';
       errorMessage.style.display = 'block';
       arButton.style.display = 'none';
     });
@@ -202,6 +211,11 @@
     modelViewer.addEventListener('load', () => {
       console.log('[Model Viewer] Model loaded successfully.');
       errorMessage.style.display = 'none';
+      
+      // Hide button only if the browser explicitly knows AR is impossible
+      if (!modelViewer.canActivateAR) {
+        arButton.style.display = 'none';
+      }
     });
 
     // 2. Custom AR Button Logic
@@ -210,10 +224,16 @@
       modelViewer.activateAR();
     });
 
-    // 3. Reset button state if AR session is dismissed or fails
+    // 3. Handle AR Status (Catches the Xiaomi/ARCore failure)
     modelViewer.addEventListener('ar-status', (event) => {
       const status = event.detail.status;
-      if (status === 'failed' || status === 'not-presenting') {
+      console.log('[AR Status]', status);
+      
+      if (status === 'failed') {
+        arButton.classList.remove('flipped');
+        // Show the helpful AR error message instead of the generic Google one
+        arErrorMessage.style.display = 'block';
+      } else if (status === 'not-presenting') {
         arButton.classList.remove('flipped');
       }
     });
