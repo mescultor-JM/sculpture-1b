@@ -12,16 +12,18 @@
 
   <title>AR Sculpture</title>
 
-  <!--
-    Google Model Viewer
-    No npm / build step required.
-  -->
+  <!-- Model Viewer -->
   <script
     type="module"
     src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js">
   </script>
 
   <style>
+
+    /* ==========================================
+       BASIC PAGE
+       ========================================== */
+
     * {
       box-sizing: border-box;
     }
@@ -30,8 +32,10 @@
     body {
       margin: 0;
       padding: 0;
+
       width: 100%;
       height: 100%;
+
       overflow: hidden;
 
       background: #ffffff;
@@ -50,12 +54,14 @@
       position: relative;
     }
 
-    /* ============================================
-       MODEL VIEWER
-       ============================================ */
+
+    /* ==========================================
+       3D MODEL
+       ========================================== */
 
     model-viewer {
       position: absolute;
+
       inset: 0;
 
       width: 100%;
@@ -66,9 +72,10 @@
       background-color: #ffffff;
     }
 
-    /* ============================================
-       ERROR MESSAGES
-       ============================================ */
+
+    /* ==========================================
+       GENERAL MESSAGE
+       ========================================== */
 
     .message {
       display: none;
@@ -80,48 +87,72 @@
 
       transform: translate(-50%, -50%);
 
-      width: min(420px, 85vw);
+      width: min(420px, 86vw);
 
-      padding: 22px;
+      padding: 24px;
 
-      border-radius: 14px;
+      background: #ffffff;
+
+      border-radius: 16px;
 
       text-align: center;
 
+      color: #222222;
+
       font-size: 14px;
+
       line-height: 1.5;
 
       box-shadow:
-        0 12px 40px rgba(0, 0, 0, 0.18);
+        0 15px 50px rgba(0, 0, 0, 0.20);
 
       z-index: 1000;
     }
 
+    .message strong {
+      font-size: 18px;
+    }
+
+
+    /* ==========================================
+       MODEL ERROR
+       ========================================== */
+
     #error-message {
       background: #ffebee;
+
       color: #b71c1c;
     }
 
-    #ar-error-message {
+
+    /* ==========================================
+       AR INFORMATION
+       ========================================== */
+
+    #ar-info-message {
       background: #e3f2fd;
+
       color: #0d47a1;
     }
 
-    .message strong {
-      font-size: 17px;
-    }
+
+    /* ==========================================
+       BUTTONS
+       ========================================== */
 
     .message-button {
-      margin-top: 8px;
+      margin-top: 10px;
 
       padding: 10px 18px;
 
       border: 0;
+
       border-radius: 8px;
 
       color: #ffffff;
 
       font-size: 14px;
+
       font-weight: 600;
 
       cursor: pointer;
@@ -133,23 +164,27 @@
       background: #c62828;
     }
 
-    .close-ar-button {
+    .close-button {
       background: #0d47a1;
     }
 
-    /* ============================================
-       UI LAYER
-       ============================================ */
+
+    /* ==========================================
+       BOTTOM UI
+       ========================================== */
 
     #ui-layer {
       position: fixed;
 
       left: 0;
       right: 0;
+
       bottom: 0;
 
       display: flex;
+
       justify-content: center;
+
       align-items: center;
 
       padding:
@@ -162,93 +197,29 @@
       pointer-events: none;
     }
 
-    /* ============================================
+
+    /* ==========================================
        AR BUTTON
-       ============================================ */
+       ========================================== */
 
-    .flip-button-container {
-      width: min(220px, 80vw);
+    .button-container {
+      width: min(230px, 82vw);
+
       height: 64px;
-
-      perspective: 1000px;
 
       pointer-events: auto;
     }
 
-    .flip-button {
+    .action-button {
       width: 100%;
       height: 100%;
-
-      padding: 0;
 
       border: 0;
+
+      border-radius: 32px;
+
       outline: none;
 
-      background: transparent;
-
-      cursor: pointer;
-
-      -webkit-tap-highlight-color: transparent;
-
-      touch-action: manipulation;
-    }
-
-    .flip-button:focus-visible {
-      outline: 3px solid rgba(0, 122, 255, 0.45);
-      outline-offset: 4px;
-      border-radius: 34px;
-    }
-
-    .flip-button-inner {
-      position: relative;
-
-      width: 100%;
-      height: 100%;
-
-      transform-style: preserve-3d;
-
-      transition:
-        transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-
-      border-radius: 32px;
-
-      box-shadow:
-        0 8px 24px rgba(0, 0, 0, 0.15);
-    }
-
-    .flip-button.flipped .flip-button-inner {
-      transform: rotateX(180deg);
-    }
-
-    .flip-button-front,
-    .flip-button-back {
-      position: absolute;
-
-      inset: 0;
-
-      width: 100%;
-      height: 100%;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      gap: 10px;
-
-      border-radius: 32px;
-
-      font-size: 18px;
-      font-weight: 600;
-
-      letter-spacing: 0.5px;
-
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-    }
-
-    /* Front */
-
-    .flip-button-front {
       background:
         linear-gradient(
           135deg,
@@ -257,11 +228,58 @@
         );
 
       color: #ffffff;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      gap: 10px;
+
+      font-size: 18px;
+
+      font-weight: 600;
+
+      letter-spacing: 0.3px;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 8px 24px rgba(0, 122, 255, 0.30);
+
+      transition:
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+
+      -webkit-tap-highlight-color: transparent;
+
+      touch-action: manipulation;
     }
 
-    /* Back */
+    .action-button:active {
+      transform: scale(0.97);
+    }
 
-    .flip-button-back {
+    .action-button:focus-visible {
+      outline: 3px solid rgba(0, 122, 255, 0.35);
+
+      outline-offset: 4px;
+    }
+
+    .action-button svg {
+      width: 22px;
+      height: 22px;
+
+      fill: currentColor;
+    }
+
+
+    /* ==========================================
+       AR BUTTON LOADING
+       ========================================== */
+
+    .action-button.loading {
       background:
         linear-gradient(
           135deg,
@@ -269,30 +287,61 @@
           #248a3d 100%
         );
 
-      color: #ffffff;
-
-      transform: rotateX(180deg);
+      pointer-events: none;
     }
 
-    /* Icons */
 
-    .flip-button svg {
-      width: 22px;
-      height: 22px;
+    /* ==========================================
+       3D ONLY BUTTON
+       ========================================== */
 
-      flex: 0 0 auto;
+    .action-button.model-only {
+      background:
+        linear-gradient(
+          135deg,
+          #555555 0%,
+          #222222 100%
+        );
 
-      fill: currentColor;
+      box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.20);
     }
 
-    /* ============================================
-       BUTTON ANIMATION
-       ============================================ */
+
+    /* ==========================================
+       LOADING SPINNER
+       ========================================== */
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+
+      border: 3px solid rgba(255,255,255,0.35);
+
+      border-top-color: #ffffff;
+
+      border-radius: 50%;
+
+      animation:
+        spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+
+    /* ==========================================
+       PULSE
+       ========================================== */
 
     @keyframes pulse {
+
       0% {
         box-shadow:
-          0 8px 24px rgba(0, 122, 255, 0.30);
+          0 8px 24px rgba(0, 122, 255, 0.25);
       }
 
       50% {
@@ -302,57 +351,61 @@
 
       100% {
         box-shadow:
-          0 8px 24px rgba(0, 122, 255, 0.30);
+          0 8px 24px rgba(0, 122, 255, 0.25);
       }
+
     }
 
-    .flip-button:not(.flipped) .flip-button-inner {
-      animation: pulse 2.5s infinite;
+    .action-button.ar-available {
+      animation:
+        pulse 2.5s infinite;
     }
 
-    /* ============================================
+
+    /* ==========================================
        MOBILE
-       ============================================ */
+       ========================================== */
 
     @media (max-width: 480px) {
-      .flip-button-container {
-        width: min(210px, 78vw);
+
+      .button-container {
+        width: min(215px, 80vw);
+
         height: 60px;
       }
 
-      .flip-button-front,
-      .flip-button-back {
+      .action-button {
         font-size: 17px;
       }
 
-      .message {
-        padding: 20px;
-      }
     }
 
-    /* ============================================
+
+    /* ==========================================
        REDUCED MOTION
-       ============================================ */
+       ========================================== */
 
     @media (prefers-reduced-motion: reduce) {
-      .flip-button-inner {
-        transition: none;
+
+      .action-button {
+        animation: none !important;
       }
 
-      .flip-button:not(.flipped) .flip-button-inner {
-        animation: none;
-      }
     }
+
   </style>
 </head>
 
+
 <body>
 
-  <!-- ============================================
+
+  <!-- ==========================================
        3D MODEL
-       ============================================ -->
+       ========================================== -->
 
   <model-viewer
+
     id="ar-model"
 
     src="./escultura.glb"
@@ -369,6 +422,8 @@
 
     camera-controls
 
+    touch-action="pan-y"
+
     shadow-intensity="1"
 
     exposure="1"
@@ -376,22 +431,24 @@
     environment-image="neutral"
 
     loading="eager"
+
   >
   </model-viewer>
 
 
-  <!-- ============================================
-       GENERAL MODEL ERROR
-       ============================================ -->
+  <!-- ==========================================
+       MODEL ERROR
+       ========================================== -->
 
   <div
     id="error-message"
     class="message"
     role="alert"
-    aria-live="assertive"
   >
 
-    <strong>Unable to load the 3D model</strong>
+    <strong>
+      3D Model Unavailable
+    </strong>
 
     <br>
     <br>
@@ -404,9 +461,9 @@
     <br>
 
     <button
-      type="button"
+      id="reload-button"
       class="message-button reload-button"
-      onclick="location.reload()"
+      type="button"
     >
       Reload Page
     </button>
@@ -414,121 +471,86 @@
   </div>
 
 
-  <!-- ============================================
-       AR ERROR
-       ============================================ -->
+  <!-- ==========================================
+       AR INFORMATION
+       ========================================== -->
 
   <div
-    id="ar-error-message"
+    id="ar-info-message"
     class="message"
     role="alert"
-    aria-live="assertive"
   >
 
-    <strong>AR Unavailable</strong>
+    <strong id="ar-info-title">
+      AR Unavailable
+    </strong>
 
     <br>
     <br>
 
-    <span id="ar-help-text">
-      Augmented Reality could not be started on this device
-      or browser.
+    <span id="ar-info-text">
+      Augmented Reality is not available on this device.
     </span>
 
     <br>
     <br>
 
     <em>
-      You can still rotate and zoom the 3D sculpture
-      on screen.
+      You can still rotate and zoom the sculpture
+      using the 3D viewer.
     </em>
 
     <br>
     <br>
 
     <button
+      id="close-info-button"
+      class="message-button close-button"
       type="button"
-      class="message-button close-ar-button"
-      id="close-ar-error"
     >
-      Got it
+      Continue
     </button>
 
   </div>
 
 
-  <!-- ============================================
-       CUSTOM AR BUTTON
-       ============================================ -->
+  <!-- ==========================================
+       ACTION BUTTON
+       ========================================== -->
 
   <div id="ui-layer">
 
-    <div class="flip-button-container">
+    <div class="button-container">
 
       <button
-        id="ar-button"
-        class="flip-button"
+        id="action-button"
+        class="action-button"
         type="button"
-        aria-label="View sculpture in Augmented Reality"
-        aria-live="polite"
       >
 
-        <div class="flip-button-inner">
+        <!-- AR ICON -->
 
-          <!-- FRONT -->
+        <svg
+          id="ar-icon"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48
+            10 10 10 10-4.48 10-10S17.52
+            2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93
+            0-.62.08-1.21.21-1.79L9 15v1c0
+            1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3
+            c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45
+            1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93
+            1.19 5 4.06 5 7.41 0 2.08-.8
+            3.97-2.1 5.39z"
+          />
+        </svg>
 
-          <div class="flip-button-front">
-
-            <svg
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10
-                10-4.48 10-10S17.52 2 12 2zm-1
-                17.93c-3.95-.49-7-3.85-7-7.93
-                0-.62.08-1.21.21-1.79L9 15v1
-                c0 1.1.9 2 2 2v1.93zm6.9-2.54
-                c-.26-.81-1-1.39-1.9-1.39h-1v-3
-                c0-.55-.45-1-1-1H8v-2h2c.55 0
-                1-.45 1-1V7h2c1.1 0 2-.9
-                2-2v-.41c2.93 1.19 5 4.06
-                5 7.41 0 2.08-.8 3.97-2.1
-                5.39z"
-              />
-            </svg>
-
-            <span>
-              View in AR
-            </span>
-
-          </div>
-
-
-          <!-- BACK -->
-
-          <div class="flip-button-back">
-
-            <svg
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                d="M12 2C6.48 2 2 6.48 2 12
-                s4.48 10 10 10 10-4.48 10-10
-                S17.52 2 12 2zm-2 15l-5-5
-                1.41-1.41L10 14.17l7.59-7.59
-                L19 8l-9 9z"
-              />
-            </svg>
-
-            <span>
-              Activating...
-            </span>
-
-          </div>
-
-        </div>
+        <span id="button-text">
+          View in AR
+        </span>
 
       </button>
 
@@ -537,44 +559,58 @@
   </div>
 
 
-  <!-- ============================================
+  <!-- ==========================================
        JAVASCRIPT
-       ============================================ -->
+       ========================================== -->
 
   <script>
+
     (() => {
 
       "use strict";
 
-      /* ------------------------------------------
+
+      /* ========================================
          ELEMENTS
-         ------------------------------------------ */
+         ======================================== */
 
       const modelViewer =
-        document.querySelector("#ar-model");
+        document.getElementById("ar-model");
+
+      const actionButton =
+        document.getElementById("action-button");
+
+      const buttonText =
+        document.getElementById("button-text");
+
+      const arIcon =
+        document.getElementById("ar-icon");
 
       const errorMessage =
-        document.querySelector("#error-message");
+        document.getElementById("error-message");
 
       const errorText =
-        document.querySelector("#error-text");
+        document.getElementById("error-text");
 
-      const arErrorMessage =
-        document.querySelector("#ar-error-message");
+      const reloadButton =
+        document.getElementById("reload-button");
 
-      const arHelpText =
-        document.querySelector("#ar-help-text");
+      const arInfoMessage =
+        document.getElementById("ar-info-message");
 
-      const closeArError =
-        document.querySelector("#close-ar-error");
+      const arInfoTitle =
+        document.getElementById("ar-info-title");
 
-      const arButton =
-        document.querySelector("#ar-button");
+      const arInfoText =
+        document.getElementById("ar-info-text");
+
+      const closeInfoButton =
+        document.getElementById("close-info-button");
 
 
-      /* ------------------------------------------
+      /* ========================================
          DEVICE DETECTION
-         ------------------------------------------ */
+         ======================================== */
 
       const userAgent =
         navigator.userAgent || "";
@@ -590,131 +626,240 @@
         );
 
 
-      /* ------------------------------------------
-         DEBUG INFORMATION
-         ------------------------------------------ */
+      /* ========================================
+         APP STATE
+         ======================================== */
+
+      let modelLoaded = false;
+
+      let arAvailable = false;
+
+      let arStarted = false;
+
+
+      /* ========================================
+         DEBUG
+         ======================================== */
 
       console.log(
-        "[App Init] User Agent:",
+        "[AR Sculpture] Starting..."
+      );
+
+      console.log(
+        "[Device]",
         userAgent
       );
 
       console.log(
-        "[App Init] Secure Context:",
-        window.isSecureContext
-      );
-
-      console.log(
-        "[App Init] Protocol:",
-        window.location.protocol
-      );
-
-      console.log(
-        "[App Init] Android:",
+        "[Device] Android:",
         isAndroid
       );
 
       console.log(
-        "[App Init] iOS:",
+        "[Device] iOS:",
         isIOS
       );
 
+      console.log(
+        "[Security] HTTPS/Secure Context:",
+        window.isSecureContext
+      );
 
-      /* ------------------------------------------
-         AR HELP TEXT
-         ------------------------------------------ */
-
-      function updateArHelpText() {
-
-        if (isAndroid) {
-
-          arHelpText.textContent =
-            "On Android, try Google Chrome and make sure Google Play Services for AR is installed and updated.";
-
-        } else if (isIOS) {
-
-          arHelpText.textContent =
-            "On iPhone or iPad, try Safari and make sure the escultura.usdz file is available.";
-
-        } else {
-
-          arHelpText.textContent =
-            "Try a modern mobile browser with Augmented Reality support.";
-
-        }
-
-      }
+      console.log(
+        "[Protocol]",
+        window.location.protocol
+      );
 
 
-      /* ------------------------------------------
-         SHOW AR ERROR
-         ------------------------------------------ */
+      /* ========================================
+         SVG ICONS
+         ======================================== */
 
-      function showArError() {
+      const modelIcon = `
+        <svg
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            d="M12 2L3 7v10l9 5 9-5V7l-9-5zm0
+            2.3L18.5 8 12 11.7 5.5 8 12
+            4.3zM5 9.7l6 3.4v6.9l-6-3.3V9.7zm8
+            10.3v-6.9l6-3.4v7l-6 3.3z"
+          />
+        </svg>
+      `;
 
-        updateArHelpText();
 
-        arErrorMessage.style.display = "block";
+      /* ========================================
+         SET MODEL-ONLY MODE
+         ======================================== */
 
-        arButton.classList.remove("flipped");
+      function setModelOnlyMode() {
 
-        arButton.setAttribute(
+        arAvailable = false;
+
+        actionButton.classList.remove(
+          "ar-available"
+        );
+
+        actionButton.classList.add(
+          "model-only"
+        );
+
+        actionButton.innerHTML =
+          modelIcon +
+          '<span>View 3D Model</span>';
+
+        actionButton.setAttribute(
           "aria-label",
-          "View sculpture in Augmented Reality"
+          "View and rotate 3D sculpture"
+        );
+
+        console.log(
+          "[AR] Device does not support AR."
         );
 
       }
 
 
-      /* ------------------------------------------
-         HIDE AR ERROR
-         ------------------------------------------ */
+      /* ========================================
+         SET AR MODE
+         ======================================== */
 
-      function hideArError() {
+      function setArMode() {
 
-        arErrorMessage.style.display = "none";
+        arAvailable = true;
+
+        actionButton.classList.remove(
+          "model-only"
+        );
+
+        actionButton.classList.add(
+          "ar-available"
+        );
+
+        actionButton.innerHTML = `
+          <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48
+              10 10 10 10-4.48 10-10S17.52
+              2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93
+              0-.62.08-1.21.21-1.79L9 15v1c0
+              1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3
+              c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45
+              1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93
+              1.19 5 4.06 5 7.41 0 2.08-.8
+              3.97-2.1 5.39z"
+            />
+          </svg>
+
+          <span>View in AR</span>
+        `;
+
+        actionButton.setAttribute(
+          "aria-label",
+          "View sculpture in Augmented Reality"
+        );
+
+        console.log(
+          "[AR] AR is available."
+        );
 
       }
 
 
-      /* ------------------------------------------
-         MODEL LOAD
-         ------------------------------------------ */
+      /* ========================================
+         SHOW AR INFORMATION
+         ======================================== */
+
+      function showArInformation() {
+
+        if (isAndroid) {
+
+          arInfoTitle.textContent =
+            "AR Not Supported";
+
+          arInfoText.textContent =
+            "This Android device does not provide the AR capabilities required for placing the sculpture in the real world.";
+
+        }
+        else if (isIOS) {
+
+          arInfoTitle.textContent =
+            "AR Unavailable";
+
+          arInfoText.textContent =
+            "AR could not be started. Please use Safari and make sure the escultura.usdz file is available.";
+
+        }
+        else {
+
+          arInfoTitle.textContent =
+            "AR Unavailable";
+
+          arInfoText.textContent =
+            "This browser or device does not provide the Augmented Reality features required by this experience.";
+
+        }
+
+        arInfoMessage.style.display =
+          "block";
+
+      }
+
+
+      /* ========================================
+         HIDE INFORMATION
+         ======================================== */
+
+      function hideArInformation() {
+
+        arInfoMessage.style.display =
+          "none";
+
+      }
+
+
+      /* ========================================
+         MODEL LOADED
+         ======================================== */
 
       modelViewer.addEventListener(
         "load",
         () => {
 
-          console.log(
-            "[Model Viewer] Model loaded successfully."
-          );
+          modelLoaded = true;
 
-          errorMessage.style.display = "none";
+          console.log(
+            "[Model] escultura.glb loaded."
+          );
 
 
           /*
-           * canActivateAR indicates whether the current
-           * browser/device has an available AR mode.
-           *
-           * It is not a guarantee that the AR session
-           * will successfully start.
+           * Ask model-viewer whether an AR
+           * mode can actually be activated.
            */
 
-          if (!modelViewer.canActivateAR) {
+          arAvailable =
+            !!modelViewer.canActivateAR;
 
-            console.log(
-              "[AR] AR is not currently available."
-            );
 
-            arButton.style.display = "none";
+          console.log(
+            "[AR] canActivateAR:",
+            arAvailable
+          );
+
+
+          if (arAvailable) {
+
+            setArMode();
 
           } else {
 
-            console.log(
-              "[AR] AR is available."
-            );
-
-            arButton.style.display = "block";
+            setModelOnlyMode();
 
           }
 
@@ -722,55 +867,62 @@
       );
 
 
-      /* ------------------------------------------
+      /* ========================================
          MODEL ERROR
-         ------------------------------------------ */
+         ======================================== */
 
       modelViewer.addEventListener(
         "error",
         (event) => {
 
           console.error(
-            "[Model Viewer Error]",
+            "[Model Error]",
             event
           );
 
           errorText.textContent =
-            "The 3D model could not be loaded. Please check that escultura.glb exists and try again.";
+            "The file escultura.glb could not be loaded. Check that the file exists and that its filename is correct.";
 
-          errorMessage.style.display = "block";
+          errorMessage.style.display =
+            "block";
 
-          arButton.style.display = "none";
+          actionButton.style.display =
+            "none";
 
         }
       );
 
 
-      /* ------------------------------------------
-         AR BUTTON
-         ------------------------------------------ */
+      /* ========================================
+         ACTION BUTTON
+         ======================================== */
 
-      arButton.addEventListener(
+      actionButton.addEventListener(
         "click",
         async () => {
 
-          console.log(
-            "[AR] Button clicked."
-          );
-
-
           /*
-           * Don't attempt AR if model-viewer already
-           * knows that AR isn't available.
+           * If the device has no AR,
+           * the button simply remains a
+           * 3D-model button.
            */
 
-          if (!modelViewer.canActivateAR) {
+          if (!arAvailable) {
 
-            console.warn(
-              "[AR] AR cannot be activated."
+            console.log(
+              "[AR] 3D-only device."
             );
 
-            showArError();
+            return;
+
+          }
+
+
+          if (!modelLoaded) {
+
+            console.warn(
+              "[AR] Model has not loaded yet."
+            );
 
             return;
 
@@ -778,42 +930,64 @@
 
 
           /*
-           * Flip the button while AR is starting.
+           * Prevent double clicks.
            */
 
-          arButton.classList.add("flipped");
+          if (arStarted) {
 
-          arButton.setAttribute(
-            "aria-label",
-            "Activating Augmented Reality"
+            return;
+
+          }
+
+
+          arStarted = true;
+
+
+          actionButton.classList.remove(
+            "ar-available"
           );
+
+          actionButton.classList.add(
+            "loading"
+          );
+
+          actionButton.innerHTML = `
+            <div class="spinner"></div>
+            <span>Activating...</span>
+          `;
 
 
           try {
 
-            /*
-             * activateAR() returns a Promise.
-             *
-             * On Android this normally launches
-             * Scene Viewer.
-             *
-             * On iOS this can launch Quick Look.
-             */
+            console.log(
+              "[AR] Starting AR..."
+            );
+
 
             await modelViewer.activateAR();
 
+
             console.log(
-              "[AR] Activation requested successfully."
+              "[AR] Activation requested."
             );
 
-          } catch (error) {
+          }
+          catch (error) {
 
             console.error(
-              "[AR] Activation failed:",
+              "[AR] Could not start:",
               error
             );
 
-            showArError();
+            arStarted = false;
+
+            actionButton.classList.remove(
+              "loading"
+            );
+
+            setArMode();
+
+            showArInformation();
 
           }
 
@@ -821,9 +995,9 @@
       );
 
 
-      /* ------------------------------------------
+      /* ========================================
          AR STATUS
-         ------------------------------------------ */
+         ======================================== */
 
       modelViewer.addEventListener(
         "ar-status",
@@ -852,7 +1026,7 @@
             case "object-placed":
 
               console.log(
-                "[AR] Object placed."
+                "[AR] Sculpture placed."
               );
 
               break;
@@ -861,10 +1035,14 @@
             case "failed":
 
               console.error(
-                "[AR] AR session failed."
+                "[AR] AR failed."
               );
 
-              showArError();
+              arStarted = false;
+
+              setArMode();
+
+              showArInformation();
 
               break;
 
@@ -872,17 +1050,14 @@
             case "not-presenting":
 
               console.log(
-                "[AR] No longer presenting."
+                "[AR] AR session ended."
               );
 
-              arButton.classList.remove(
-                "flipped"
-              );
+              arStarted = false;
 
-              arButton.setAttribute(
-                "aria-label",
-                "View sculpture in Augmented Reality"
-              );
+              if (arAvailable) {
+                setArMode();
+              }
 
               break;
 
@@ -892,19 +1067,33 @@
       );
 
 
-      /* ------------------------------------------
-         CLOSE AR ERROR
-         ------------------------------------------ */
+      /* ========================================
+         CLOSE INFO
+         ======================================== */
 
-      closeArError.addEventListener(
+      closeInfoButton.addEventListener(
         "click",
-        hideArError
+        hideArInformation
       );
 
 
-      /* ------------------------------------------
-         ESCAPE KEY
-         ------------------------------------------ */
+      /* ========================================
+         RELOAD
+         ======================================== */
+
+      reloadButton.addEventListener(
+        "click",
+        () => {
+
+          window.location.reload();
+
+        }
+      );
+
+
+      /* ========================================
+         ESCAPE
+         ======================================== */
 
       document.addEventListener(
         "keydown",
@@ -912,10 +1101,7 @@
 
           if (event.key === "Escape") {
 
-            hideArError();
-
-            errorMessage.style.display =
-              "none";
+            hideArInformation();
 
           }
 
@@ -923,17 +1109,26 @@
       );
 
 
-      /* ------------------------------------------
-         INITIALIZATION
-         ------------------------------------------ */
+      /* ========================================
+         INITIAL BUTTON STATE
+         ======================================== */
 
-      updateArHelpText();
+      actionButton.innerHTML = `
+        <div class="spinner"></div>
+        <span>Loading 3D...</span>
+      `;
+
+      actionButton.classList.remove(
+        "ar-available"
+      );
+
 
       console.log(
-        "[App Init] AR Sculpture initialized."
+        "[AR Sculpture] Initialized."
       );
 
     })();
+
   </script>
 
 </body>
