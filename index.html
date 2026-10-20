@@ -893,69 +893,106 @@
       );
 
 
-     /* ========================================
-        ACTION BUTTON 
-        ======================================== */
+      /* ========================================
+         ACTION BUTTON
+         ======================================== */
 
-actionButton.addEventListener("click", () => {
+      actionButton.addEventListener(
+        "click",
+        async () => {
 
-  if (!arAvailable || !modelLoaded || arStarted) {
-    return;
-  }
+          /*
+           * If the device has no AR,
+           * the button simply remains a
+           * 3D-model button.
+           */
 
-  arStarted = true;
+          if (!arAvailable) {
 
-  actionButton.classList.remove("ar-available");
-  actionButton.classList.add("loading");
+            console.log(
+              "[AR] 3D-only device."
+            );
 
-  actionButton.innerHTML = `
-    <div class="spinner"></div>
-    <span>Activating...</span>
-  `;
+            return;
 
-  console.log("[AR] Starting AR...");
+          }
 
-  try {
-    // Call activateAR directly from the user click.
-    const activation = modelViewer.activateAR();
 
-    Promise.resolve(activation).catch((error) => {
-      console.error("[AR] Activation error:", error);
+          if (!modelLoaded) {
 
-      arStarted = false;
-      actionButton.classList.remove("loading");
+            console.warn(
+              "[AR] Model has not loaded yet."
+            );
 
-      setArMode();
-      showArInformation();
-    });
+            return;
 
-    // Restore the button if AR never opens.
-    window.setTimeout(() => {
-      if (
-        arStarted &&
-        document.visibilityState === "visible"
-      ) {
-        console.warn("[AR] Activation timed out.");
+          }
 
-        arStarted = false;
-        actionButton.classList.remove("loading");
 
-        setArMode();
-        showArInformation();
-      }
-    }, 12000);
+          /*
+           * Prevent double clicks.
+           */
 
-  } catch (error) {
-    console.error("[AR] Could not start:", error);
+          if (arStarted) {
 
-    arStarted = false;
-    actionButton.classList.remove("loading");
+            return;
 
-    setArMode();
-    showArInformation();
-  }
+          }
 
-});
+
+          arStarted = true;
+
+
+          actionButton.classList.remove(
+            "ar-available"
+          );
+
+          actionButton.classList.add(
+            "loading"
+          );
+
+          actionButton.innerHTML = `
+            <div class="spinner"></div>
+            <span>Activating...</span>
+          `;
+
+
+          try {
+
+            console.log(
+              "[AR] Starting AR..."
+            );
+
+
+            await modelViewer.activateAR();
+
+
+            console.log(
+              "[AR] Activation requested."
+            );
+
+          }
+          catch (error) {
+
+            console.error(
+              "[AR] Could not start:",
+              error
+            );
+
+            arStarted = false;
+
+            actionButton.classList.remove(
+              "loading"
+            );
+
+            setArMode();
+
+            showArInformation();
+
+          }
+
+        }
+      );
 
 
       /* ========================================
@@ -1034,22 +1071,10 @@ actionButton.addEventListener("click", () => {
          CLOSE INFO
          ======================================== */
 
-// Restore the button when returning from native AR.
-document.addEventListener("visibilitychange", () => {
-  if (
-    document.visibilityState === "visible" &&
-    arStarted
-  ) {
-    arStarted = false;
-    actionButton.classList.remove("loading");
-
-    if (modelViewer.canActivateAR) {
-      setArMode();
-    } else {
-      setModelOnlyMode();
-    }
-  }
-});
+      closeInfoButton.addEventListener(
+        "click",
+        hideArInformation
+      );
 
 
       /* ========================================
